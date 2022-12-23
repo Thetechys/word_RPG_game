@@ -1,35 +1,92 @@
-import argparse
-import math
+from random import randint
 
 
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('-r','--repeat',type=int,help='number of repeat')
-# argx = parser.parse_args()
 
-
-# def justTry(*args):
-
-#     x = args
-
-#     print(args)
+friendList = []
+foeList = []
 
 
 
-# justTry(argx.repeat)
+class character():
+
+    character_numer = 0
+
+    def __init__(self):
+        self.health = 100
+        self.atk = 5 ##default value for all character
+        self.dfn = 5
+        character.character_numer += 1
+        friendList
+
+    def attack(self):
+        self.atk_pt = self.atk
+        return self.atk_pt
+
+    def defence(self):
+        self.dfn_pt = self.dfn
+        return self.dfn_pt
 
 
-parser = argparse.ArgumentParser(description='calculate')
-parser.add_argument('-r','--radius',type=int,help='radius of cylinder')
-parser.add_argument('-H','--height',type=int,help='height of cylinder')
-args = parser.parse_args()
+class own_warrior(character):
 
-def cylinder_vol(radius, height):
+    own_character = 0
 
-    vol = (math.pi) * (radius ** 2) * (height)
-    return vol
+    def __init__(self):
+        super().__init__()
+        self.atk = randint(15,25)
+        self.dfn = randint(5,15)
+        own_warrior.own_character += 1
+        self.alias_num = self.own_character
+        self.turn = 0
 
 
-if __name__ == '__main__':
+class foe_warrior(character):
 
-    print(cylinder_vol(args.radius, args.height))
+    foe_character = 0
+
+    def __init__(self):
+        super().__init__()
+        self.atk = randint(15,25)
+        self.dfn = randint(5,15)
+        foe_warrior.foe_character += 1
+        self.alias_num = self.foe_character
+        self.turn = 0
+
+
+
+
+
+mate1 = own_warrior()
+mate2 = own_warrior()
+# mate3 = own_warrior()
+''' --------------------'''
+enemy1 = foe_warrior()
+enemy2 = foe_warrior()
+# enemy3 = foe_warrior()
+
+mateList = [mate1,mate2]
+enemyList = [enemy1,enemy2]
+
+
+def justTry():
+
+    x = []
+
+    for i in range(len(mateList)):
+
+        x.append(f'{i+1} - mate{i+1}')
+
+    return x
+
+
+
+def mateBanner():
+
+    x = []
+
+    for i in range(len(mateList)):
+        x.append(f'{i+1} - mate{i+1}')
+    return x
+
+print(mateBanner()[0]+"\n"+mateBanner()[1])

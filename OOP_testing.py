@@ -1,13 +1,6 @@
 from random import randint
 
 
-
-
-friendList = []
-foeList = []
-
-
-
 class character():
 
     character_numer = 0
@@ -17,7 +10,6 @@ class character():
         self.atk = 5 ##default value for all character
         self.dfn = 5
         character.character_numer += 1
-        friendList
 
     def attack(self):
         self.atk_pt = self.atk
@@ -28,19 +20,17 @@ class character():
         return self.dfn_pt
 
 
-
 class own_warrior(character):
 
     own_character = 0
 
     def __init__(self):
         super().__init__()
-        self.health = 105
         self.atk = randint(15,25)
         self.dfn = randint(5,15)
         own_warrior.own_character += 1
         self.alias_num = self.own_character
-        friendList.append(self)
+        self.turn = 0
 
 
 class foe_warrior(character):
@@ -49,64 +39,76 @@ class foe_warrior(character):
 
     def __init__(self):
         super().__init__()
-        self.health = 105
         self.atk = randint(15,25)
         self.dfn = randint(5,15)
         foe_warrior.foe_character += 1
         self.alias_num = self.foe_character
-        foeList.append(self)
+        self.turn = 0
+
+
+
+
+
+mate1 = own_warrior()
+mate2 = own_warrior()
+# mate3 = own_warrior()
+''' --------------------'''
+enemy1 = foe_warrior()
+enemy2 = foe_warrior()
+# enemy3 = foe_warrior()
+
+mateList = [mate1,mate2]
+enemyList = [enemy1,enemy2]
 
 
 def player_input():
-    your_input = input(str('do you want to attack enemy?[y/n]:  '))
+
+    print('which character to launch attack?: ')
+    print(mateBanner()[0]+'\n'+mateBanner()[1])
+    your_input = input(str('?:  '))
+    mateBanner()
     return your_input
 
 
+def mateBanner():
 
-asa = own_warrior()
-suji = own_warrior()
-''' --------------------'''
-sumo = foe_warrior()
-sapporo = foe_warrior()
-genji = foe_warrior()
+    x = []
 
+    for i in range(len(mateList)):
+        x.append(f'{i+1} - mate{i+1}\n')
+    return x
 
-print(f'friend list: {friendList}')
-print(f'foe list: {foeList}')
+def enemyBanner():
 
-# print(asa.alias_num)
-# print(suji.alias_num)
-# print(sumo.alias_num)
-# print(sapporo.alias_num)
-# print(genji.alias_num)
+    x = []
 
-
-
+    for i in range(len(enemyList)):
+        x.append(f'{i+1} - mate{i+1}')
+    return x
 
 round = 10
-
 '''1 mod 2 == 0     ;   2 mod 2 == 1'''
 
 
 
 
-# while round != 0:
+while round != 0:
 
-#     if round % 2 == 0:
+    if round % 2 == 0:
 
-#         match player_input():
+        match player_input():
 
-#             case 'y':
+            case 'y':
 
-#                 print('attack')
-#                 round -= 1
+                print('attack')
+                round -= 1
         
-#             case 'n':
+            case 'n':
 
-#                 print('pass this round')
-#                 round -= 1
+                print('pass this round')
+                round -= 1
 
-#     else:
+    else:
 
-#         print('enemy attack')
-#         round -= 1
+        print('enemy attack')
+        round -= 1
