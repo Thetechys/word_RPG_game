@@ -1,5 +1,6 @@
 from random import randint
-
+import time
+from random import randint
 
 class character():
 
@@ -32,6 +33,8 @@ class own_warrior(character):
         self.alias_num = self.own_character
         self.turn = 0
 
+    def __repr__(self):
+        return f'mate{self.alias_num}'
 
 class foe_warrior(character):
 
@@ -45,70 +48,157 @@ class foe_warrior(character):
         self.alias_num = self.foe_character
         self.turn = 0
 
+    def __repr__(self):
+        return f'enemy{self.alias_num}'
 
 
-
-
+'''--- friendly team instances ---'''
 mate1 = own_warrior()
 mate2 = own_warrior()
-# mate3 = own_warrior()
-''' --------------------'''
+'''--- enemy team instances ---'''
 enemy1 = foe_warrior()
 enemy2 = foe_warrior()
-# enemy3 = foe_warrior()
 
 mateList = [mate1,mate2]
 enemyList = [enemy1,enemy2]
 
 
-def player_input():
+def player_input():  ## player characters take turn to attack, don't use this 
 
     print('which character to launch attack?: ')
-    print(mateBanner()[0]+'\n'+mateBanner()[1])
     your_input = input(str('?:  '))
-    mateBanner()
     return your_input
 
 
-def mateBanner():
+def targetInput():
 
-    x = []
-
-    for i in range(len(mateList)):
-        x.append(f'{i+1} - mate{i+1}\n')
-    return x
-
-def enemyBanner():
-
-    x = []
-
-    for i in range(len(enemyList)):
-        x.append(f'{i+1} - mate{i+1}')
-    return x
-
-round = 10
-'''1 mod 2 == 0     ;   2 mod 2 == 1'''
+    print('who to attack?: ')
+    checkAvailableTarget()
+    your_input = int(input())
+    return your_input
 
 
 
+def checkAvailableTarget():
 
-while round != 0:
+    alive = []
+    h_pt = []
 
-    if round % 2 == 0:
+    for i in enemyList:
+        alive.append(i)
+        h_pt.append(i.health)
 
-        match player_input():
+    finList = list(enumerate(zip(alive,h_pt),1))
 
-            case 'y':
+    for (num,(name,hp)) in finList:
+        print(f'{num} - {name} - HP: {hp}')
 
-                print('attack')
-                round -= 1
-        
-            case 'n':
 
-                print('pass this round')
-                round -= 1
+def get_tar_dfn(list,tar):   # to be use in get_dmg
+
+    if list == mateList:
+        tget = mateList[tar]
+
+    elif list == enemyList:
+        tget = enemyList[tar]
+
+    return tget.dfn
+
+
+def get_tar_atk(list,tar):   # to be use in get_dmg
+
+    if list == mateList:
+        tget = mateList[tar]
+
+    elif list == enemyList:
+        tget = enemyList[tar]
+
+    return tget.atk
+
+
+def get_dmg(atk,dfn):
+
+    dmg = atk - dfn
+    print(f'atk is {atk}')
+    print(f'dfn is {dfn}')
+    print(f'damage caused : {dmg} \n')
+    
+    return dmg
+
+
+
+round = 0
+
+while True:
+
+    if round % 2 == 0:      ## list changer
+
+        round += 1
+        print('------------------player round start------------------')
+
+        for i in mateList:
+
+            if i.health > 0:
+                
+                print(f'Attacker of this round = {i}')
+
+                match targetInput():
+
+                    case 1:
+                        
+                        print(i,'launched attack')
+                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,1))
+                        enemy1.health -= dmg
+
+
+                    case 2:
+                        
+                        print(i,'launched attack')
+                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,2))
+                        enemy1.health -= dmg
+                    
+                    case 3:
+                        print('--debug purpose --')
+    
+    
+    elif round % 2 == 1:
+
+        round += 1
+        print('------------------enemy round start------------------')
+
+        for i in enemyList:
+
+            if i.health > 0:
+                
+                print(f'Attacker of this round = {i}')
+
+                match targetInput():
+
+                    case 1:
+                        
+                        print(i,'launched attack')
+                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,1))
+                        enemy1.health -= dmg
+                        time.sleep(1)
+
+
+                    case 2:
+                        
+                        print(i,'launched attack')
+                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,2))
+                        enemy1.health -= dmg
+                        time.sleep(1)
+                    
+                    case 3:
+                        print('--debug purpose --')
+
 
     else:
 
-        print('enemy attack')
-        round -= 1
+        print('debuggin purposes')
+        break
+
+
+# for i in mateList:
+
+#     print(i)
