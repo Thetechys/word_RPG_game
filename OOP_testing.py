@@ -20,14 +20,22 @@ class character():
         self.dfn_pt = self.dfn
         return self.dfn_pt
 
+    @property # character is Dead Or Alive
+    def doa(self):
+        if self.health > 0:
+            return 1
+        else: 
+            return 0
 
-class own_warrior(character):
+class own_warrior(character):   # class of mate , subclass of CHARACTER
 
     own_character = 0
 
     def __init__(self):
         super().__init__()
-        self.atk = randint(15,25)
+        # self.atk = randint(15,25)
+        self.atk = randint(50,55)
+        
         self.dfn = randint(5,15)
         own_warrior.own_character += 1
         self.alias_num = self.own_character
@@ -36,13 +44,13 @@ class own_warrior(character):
     def __repr__(self):
         return f'mate{self.alias_num}'
 
-class foe_warrior(character):
+class foe_warrior(character):   #class of enemy , also subclass of CHARACTER
 
     foe_character = 0
 
     def __init__(self):
         super().__init__()
-        self.atk = randint(15,25)
+        self.atk = randint(40,45)
         self.dfn = randint(5,15)
         foe_warrior.foe_character += 1
         self.alias_num = self.foe_character
@@ -63,11 +71,25 @@ mateList = [mate1,mate2]
 enemyList = [enemy1,enemy2]
 
 
-def player_input():  ## player characters take turn to attack, don't use this 
+def get_doa(args):  ## player characters take turn to attack, don't use this, maybe will delete this
 
-    print('which character to launch attack?: ')
-    your_input = input(str('?:  '))
-    return your_input
+    doa_score = 0
+
+    match args:
+
+        case 'mate':
+
+            for i in mateList:
+                doa_score += i.doa
+
+
+        case 'enemy':
+
+            for i in enemyList:
+                doa_score += i.doa
+
+    # return f'{args} score is : {doa_score}'   this line is for debug purpose
+    return doa_score
 
 
 def targetInput():
@@ -76,6 +98,9 @@ def targetInput():
     checkAvailableTarget()
     your_input = int(input())
     return your_input
+
+def randomInput(start,end):   # for 'flip-coin' function and enemy deciding who to attack
+    return randint(start,end)
 
 
 
@@ -88,7 +113,21 @@ def checkAvailableTarget():
         alive.append(i)
         h_pt.append(i.health)
 
-    finList = list(enumerate(zip(alive,h_pt),1))
+    finList = list(enumerate(zip(alive,h_pt),0))
+
+    for (num,(name,hp)) in finList:
+        print(f'{num} - {name} - HP: {hp}')
+
+def checkTeamHealth():
+
+    alive = []
+    h_pt = []
+
+    for i in mateList:
+        alive.append(i)
+        h_pt.append(i.health)
+
+    finList = list(enumerate(zip(alive,h_pt),0))
 
     for (num,(name,hp)) in finList:
         print(f'{num} - {name} - HP: {hp}')
@@ -116,7 +155,7 @@ def get_tar_atk(list,tar):   # to be use in get_dmg
     return tget.atk
 
 
-def get_dmg(atk,dfn):
+def get_dmg(atk,dfn):  # parse in get_tar_atk and get_tar_dfn as argument
 
     dmg = atk - dfn
     print(f'atk is {atk}')
@@ -131,74 +170,115 @@ round = 0
 
 while True:
 
-    if round % 2 == 0:      ## list changer
+    if get_doa('mate')!=0 and get_doa('enemy')!= 0:
 
-        round += 1
-        print('------------------player round start------------------')
+        if round % 2 == 0:      ## round changer
 
-        for i in mateList:
+            round += 1
+            print('------------------player round start------------------')
 
-            if i.health > 0:
-                
-                print(f'Attacker of this round = {i}')
+            for i in mateList:
 
-                match targetInput():
-
-                    case 1:
-                        
-                        print(i,'launched attack')
-                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,1))
-                        enemy1.health -= dmg
-
-
-                    case 2:
-                        
-                        print(i,'launched attack')
-                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,2))
-                        enemy1.health -= dmg
+                if i.health > 0:
                     
-                    case 3:
-                        print('--debug purpose --')
-    
-    
-    elif round % 2 == 1:
+                    print(f'Attacker of this round = {i}')
 
-        round += 1
-        print('------------------enemy round start------------------')
+                    match targetInput():
 
-        for i in enemyList:
+                        case 0:
+                            
+                            if enemyList[0].health > 0:
 
-            if i.health > 0:
-                
-                print(f'Attacker of this round = {i}')
+                                print(i,'launched attack on',enemyList[0])
+                                dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,0))
+                                enemy1.health -= dmg
+                                print(f'enemy1 received {dmg} damage! \n')
 
-                match targetInput():
+                            else:
 
-                    case 1:
-                        
-                        print(i,'launched attack')
-                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,1))
-                        enemy1.health -= dmg
-                        time.sleep(1)
+                                print(f'this character is dead, attack not successful \n')
 
 
-                    case 2:
-                        
-                        print(i,'launched attack')
-                        dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,2))
-                        enemy1.health -= dmg
-                        time.sleep(1)
+                        case 1:
+                            
+                            if enemyList[1].health > 0:
+
+                                print(i,'launched attackon',enemyList[1])
+                                dmg = get_dmg(get_tar_atk(mateList,mateList.index(i)),get_tar_dfn(enemyList,1))
+                                enemy2.health -= dmg
+                                print(f'enemy2 received {dmg} damage!')
+
+                            else:
+
+                                print(f'this character is dead, attack not successful \n')
+
+                        case _:   # the _: mean matching any-other-else
+                            print('--invalid input, wasted a chance to attack --')
+
+                else:
+
+                    continue
+        
+        else:
+
+            round += 1
+            print('------------------enemy round start------------------')
+
+            for i in enemyList:
+
+                if i.health > 0:
                     
-                    case 3:
-                        print('--debug purpose --')
+                    print(f'Attacker of this round = {i}')
+
+                    match randomInput(0,1):
+
+                        case 0:
+                            
+                            if mateList[0].health > 0:
+
+                                checkTeamHealth()
+                                print(i,'launched attack on',mateList[0])
+                                dmg = get_dmg(get_tar_atk(enemyList,enemyList.index(i)),get_tar_dfn(mateList,0))
+                                mate1.health -= dmg
+                                print(f'mate1 received {dmg} damage!')
+
+                                checkTeamHealth()
+
+                            else:
+
+                                print(f'this character is dead, attack not successful \n')
 
 
+                        case 1:
+                            
+                            if mateList[1].health > 0:
+
+                                checkTeamHealth()
+                                print(i,'launched attack on',mateList[1])
+                                dmg = get_dmg(get_tar_atk(enemyList,enemyList.index(i)),get_tar_dfn(mateList,1))
+                                mate2.health -= dmg
+                                print(f'mate2 received {dmg} damage!')
+
+                                checkTeamHealth()
+
+                            else:
+
+                                print(f'this character is dead, attack not successful \n')
+
+                        
+                        case _:   
+                            print('--invalid input, wasted a chance to attack --')
+
+                else:
+                    continue
+    
     else:
 
-        print('debuggin purposes')
+        if get_doa('mate')==0:
+            print('-->> PLAYER character all dead, ENEMY win <<--')
+        
+        
+        elif get_doa('enemy')==0:
+            print('-->> ENEMY character all dead, PLAYER win <<--')
+
         break
-
-
-# for i in mateList:
-
-#     print(i)

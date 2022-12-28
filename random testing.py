@@ -1,9 +1,9 @@
+x = 20
+
+y = 30
 
 
 
-aList = ['apple','banana']
+xy = y.__add__(x)
 
-
-x = len(aList)
-
-print(x)
+print(xy)
