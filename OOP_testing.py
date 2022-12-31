@@ -1,3 +1,6 @@
+## this is word based game 
+
+
 from random import randint
 import time
 from random import randint
